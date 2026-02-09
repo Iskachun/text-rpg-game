@@ -1,15 +1,11 @@
-const lines = [
-  "Hello, I'm Alex!",
-  "Welcome to my sanctuary", 
-  "",
-];
+let lines = [];
 
 let lineIndex = 0;
 let charIndex = 0;
-const speed = 180; // typing speed in ms
-const typedElement = document.getElementById("typed-text");
+let speed = 180; // typing speed in ms
+let typedElement = document.getElementById("typed-text");
 
-function typeWriter() {
+function typeWriter () {
   if (charIndex < lines[lineIndex].length) {
     typedElement.innerHTML += lines[lineIndex].charAt(charIndex);
     
@@ -31,3 +27,16 @@ function typeWriter() {
 }
 
 window.onload = typeWriter;
+
+
+function type (lines2, elementId, speed2 = 180) {
+  lineIndex = 0;
+  charIndex = 0;
+  lines = lines2;
+  typedElement = document.getElementById(elementId);
+  speed = speed2;
+  typedElement.innerHTML = ""; // clear previous text
+  typeWriter();
+}
+
+type(["Welcome, traveler"], "welcome");
