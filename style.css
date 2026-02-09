@@ -15,4 +15,18 @@ body {
     overflow-y: auto;
     padding: 20px;
     color: #cec1d3;
+    text-align: center;
+}
+
+button {
+    background-color: #623873;
+    border-radius: 20px;
+    width: 175px;
+    max-width: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    color: #cec1d3;
+    display: block;
+    margin: 0 auto;
+    visibility: hidden;
 }

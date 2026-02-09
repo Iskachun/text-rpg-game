@@ -5,12 +5,12 @@ let charIndex = 0;
 let speed = 180; // typing speed in ms
 let typedElement = document.getElementById("typed-text");
 
-function typeWriter () {
+function typeWriter (onComplete) {
   if (charIndex < lines[lineIndex].length) {
     typedElement.innerHTML += lines[lineIndex].charAt(charIndex);
     
     charIndex++;
-    setTimeout(typeWriter, speed);
+    setTimeout(() => typeWriter(onComplete), speed);
 
     
   } else {
@@ -20,23 +20,41 @@ function typeWriter () {
       setTimeout(() => {
         typedElement.innerHTML += "<br>"; // line break
         charIndex = 0;
-        typeWriter();
-      }, 700); // small pause before next line
+        typeWriter(onComplete);
+      }, speed * 10); // small pause before next line
+    } else if (onComplete) {
+      // all lines finished - call callback
+      onComplete();
     }
   }
 }
 
-window.onload = typeWriter;
-
-
-function type (lines2, elementId, speed2 = 180) {
+// typewriter function that takes the text and element id as parameters
+function type (lines2, elementId, speed2 = 180, onComplete) {
   lineIndex = 0;
   charIndex = 0;
   lines = lines2;
   typedElement = document.getElementById(elementId);
   speed = speed2;
   typedElement.innerHTML = ""; // clear previous text
-  typeWriter();
+  typeWriter(onComplete);
 }
 
-type(["Welcome, traveler"], "welcome");
+
+
+
+// ENTERING //
+
+type(["Welcome, traveler", ""], "welcome", 10, () => {
+  document.getElementById("start_btn").style.visibility = "visible";
+});
+
+
+// GAME START //
+
+function gameStart () {
+  document.getElementById("welcome").remove();
+  document.getElementById("start_btn").remove();
+
+  
+}
