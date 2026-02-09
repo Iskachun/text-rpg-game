@@ -40,8 +40,9 @@ function type (lines2, elementId, speed2 = 180, onComplete) {
   typeWriter(onComplete);
 }
 
-let progress = "welcome"; 
-localStorage.setItem("progress", progress);
+
+
+
 
 
 // ENTERING //
@@ -53,8 +54,13 @@ function enter () {
 }
 
 const saved = localStorage.getItem("progress");
-if (saved == "welcome") enter();
-else gameStart();
+if (saved == "welcome" || !saved) {
+  // First time or still on welcome screen
+  if (!saved) localStorage.setItem("progress", "welcome");
+  enter();
+} else {
+  gameStart();
+}
 
 // GAME START //
 
