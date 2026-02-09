@@ -55,6 +55,4 @@ type(["Welcome, traveler", ""], "welcome", 10, () => {
 function gameStart () {
   document.getElementById("welcome").remove();
   document.getElementById("start_btn").remove();
-
-  
 }
