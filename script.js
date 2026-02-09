@@ -54,7 +54,7 @@ function enter () {
 
 const saved = localStorage.getItem("progress");
 if (saved == "welcome") enter();
-
+else gameStart();
 
 // GAME START //
 
