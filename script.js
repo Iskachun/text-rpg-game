@@ -40,14 +40,20 @@ function type (lines2, elementId, speed2 = 180, onComplete) {
   typeWriter(onComplete);
 }
 
-
+let progress = "welcome";
+localStorage.setItem("progress", progress);
 
 
 // ENTERING //
 
-type(["Welcome, traveler", ""], "welcome", 10, () => {
-  document.getElementById("start_btn").style.visibility = "visible";
-});
+function enter () {
+  type(["Welcome, traveler", ""], "welcome", 180, () => {
+    document.getElementById("start_btn").style.visibility = "visible";
+  });
+}
+
+const saved = localStorage.getItem("progress");
+if (saved == "welcome") enter();
 
 
 // GAME START //
@@ -55,4 +61,8 @@ type(["Welcome, traveler", ""], "welcome", 10, () => {
 function gameStart () {
   document.getElementById("welcome").remove();
   document.getElementById("start_btn").remove();
+  progress = "start";
+
+  localStorage.setItem("progress", progress);
+
 }
