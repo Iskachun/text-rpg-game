@@ -30,17 +30,19 @@ function typeWriter (onComplete) {
 }
 
 // typewriter function that takes the text and element id as parameters
-function type (lines2, elementId, speed2 = 180, onComplete) {
+function type (lines2, elementId, onComplete) {
   lineIndex = 0;
   charIndex = 0;
   lines = lines2;
   typedElement = document.getElementById(elementId);
-  speed = speed2;
   typedElement.innerHTML = ""; // clear previous text
   typeWriter(onComplete);
 }
 
-
+function restart () {
+  localStorage.setItem("progress", "welcome");
+  location.reload();
+}
 
 
 
@@ -48,7 +50,7 @@ function type (lines2, elementId, speed2 = 180, onComplete) {
 // ENTERING //
 
 function enter () {
-  type(["Welcome, traveler", ""], "welcome", 180, () => {
+  type(["Welcome, traveler", ""], "welcome", () => {
     document.getElementById("start_btn").style.visibility = "visible";
   });
 }
@@ -67,8 +69,23 @@ if (saved == "welcome" || !saved) {
 function gameStart () {
   document.getElementById("welcome").remove();
   document.getElementById("start_btn").remove();
-  progress = "start";
 
-  localStorage.setItem("progress", progress);
+  const saved = localStorage.getItem("progress");
+  if (saved == "welcome") {
+    localStorage.setItem("progress", "start");
+  }
 
+  forest_path();
+}
+
+function forest_path () {
+  speed = 100;
+  type(["You're in a forest.", 
+    "A soft wind comes by,", "the leaves rustling.", 
+    "The sun is shining,", "the birds chittering happily.", 
+    "There is a path in front of you.", 
+    "Will you follow it?"], "text", () => {
+    document.getElementById("c1").style.visibility = "Visible";
+    documetn.getElementById("c2").style.visibility = "Visible";
+  });
 }

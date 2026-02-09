@@ -18,7 +18,7 @@ body {
     text-align: center;
 }
 
-button {
+#start_btn, #reset_btn {
     background-color: #623873;
     border-radius: 20px;
     width: 175px;
@@ -28,5 +28,20 @@ button {
     color: #cec1d3;
     display: block;
     margin: 0 auto;
+}
+
+#start_btn {
+    visibility: hidden;
+}
+
+.choice {
+    background-color: #623873;
+    border-radius: 20px;
+    width: 175px;
+    max-width: 100%;
+    overflow-y: auto;
+    color: #cec1d3;
+    margin: 0 auto;
+    height: 100px;
     visibility: hidden;
 }
