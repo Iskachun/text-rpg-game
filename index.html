@@ -9,30 +9,37 @@
 <body>
     <div class="main">
         <h2 id="welcome"></h2>
-        <button id="start_btn" onclick=gameStart()>click to start</button>
         
         <p id="text"></p>
-        <button class="choice" id="c1" onclick=enter_village()>Follow the path</button>
-        <button class="choice" id="c2" onclick=cont_forest()>Continue into the forest</button>
+        <br>
 
-        <button class="choice" id="c3" onclick=village()>Enter the village</button>
-        <button class="choice" id="c4" onclick=gameStart()>Return to the forest path</button>
-
-        <button class="choice" id="c5" onclick=square()>Go to the main square</button>
-        <button class="choice" id="c6" onclick=market()>Go to the market</button>
-        <button class="choice" id="c7" onclick=inn()>Go to the inn</button>
-        
+        <div class="choice-container">
+            <button id="start_btn" onclick=gameStart()>click to start</button>
 
 
-        <button class="choice" id="s1">Pick it up</button>
-        <button class="choice" id="s2">Don't pick it up</button>
+            <button class="choice" id="c1" onclick=enter_village()>Follow the path</button>
+            <button class="choice" id="c2" onclick=cont_forest()>Continue into the forest</button>
+
+            <button class="choice" id="c3" onclick=village()>Enter the village</button>
+            <button class="choice" id="c4" onclick=gameStart()>Return to the forest</button>
+
+            <button class="choice" id="c5" onclick=square()>Go to the main square</button>
+            <button class="choice" id="c6" onclick=market()>Go to the market</button>
+            <button class="choice" id="c7" onclick=inn()>Go to the inn</button>
+            
+
+
+            <button class="choice" id="s1">Pick it up</button>
+            <button class="choice" id="s2">Don't pick it up</button>
+
+        </div>
         
         <br><br>
-        <div class="inv">
-            <h4>Inventory:</h4>
+        <div class="inv" id="inv">
+            <h4>Your bag:</h4>
 
             <h5 class="invh5">Money:</h5>
-            <p id="money">0</p>
+            <p id="money"></p>
 
             <h5 class="invh5">Items:</h5>
             <p id="inv_items">

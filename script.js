@@ -8,11 +8,19 @@ let inv_money = document.getElementById("money");
 let inv_item = document.getElementById("inv_items");
 let inv_weap = document.getElementById("inv_weapons");
 
-let money = 0;
+let money = 100;
 let items = [];
 let weapons = [];
 
+
+let visit_cnt = {
+  "forest_path" : 0
+};
+
+
 function typeWriter (onComplete) {
+  console.log(lines[lineIndex]);
+
   if (charIndex < lines[lineIndex].length) {
     typedElement.innerHTML += lines[lineIndex].charAt(charIndex);
     
@@ -36,6 +44,8 @@ function typeWriter (onComplete) {
   }
 }
 
+
+
 // typewriter function that takes the text and element id as parameters
 function type (lines2, elementId, onComplete) {
   lineIndex = 0;
@@ -46,17 +56,9 @@ function type (lines2, elementId, onComplete) {
   typeWriter(onComplete);
 }
 
-function restart () {
-  localStorage.setItem("location", "welcome");
-  location.reload();
-}
-
-
-money = 10;
-items = ["Old sword", "Torn cloak"];
-weapons = ["Rusty dagger"];
 
 function update_inv () {
+
   inv_money.innerHTML = JSON.stringify(money);
   inv_item.innerHTML = "";
   inv_weap.innerHTML = "";
@@ -68,11 +70,99 @@ function update_inv () {
     inv_weap.innerHTML += weap + "<br>";
   }
 
-  
-  
+  localStorage.setItem("money", JSON.stringify(money));
+  localStorage.setItem("items", JSON.stringify(items));
 }
 
-update_inv();
+
+
+
+let surprise_items = [
+  "Bag with gold coins",
+  "Suspicous bag",
+  "Old dagger",
+  "Dirty cloth",
+  "Cool stick"
+]
+
+function surprise (location, onComplete) {
+  if (visit_cnt[location] <= 1) {
+    // don't "generate" surprises when entered the first time
+    if (onComplete) onComplete();
+    return;
+  }
+
+  let val = Math.floor(Math.random() * 20) + 1;
+
+  console.log(val);
+  console.log(surprise_items.length);
+
+  if (val < surprise_items.length) {
+    type([
+        "You notice something on the ground.",
+        "Will you pick it up?",
+        ""
+      ], "text", () => {
+        document.getElementById("s1").style.display = "block";
+        document.getElementById("s2").style.display = "block";
+
+        document.getElementById("s1").addEventListener("click", () => {
+          document.getElementById("s1").style.display = "none";
+          document.getElementById("s2").style.display = "none";
+          
+          type([
+            "You pick it up.",
+            "You find a",
+            "",
+            surprise_items[val],
+            "",
+            "You put it in your bag.",
+            ""
+          ], "text", () => {
+
+                  if (val == 0) {
+                    money += Math.floor(Math.random() * 100) + 1;
+                  }
+                  else {
+                    items.push(surprise_items[val]);
+                  }
+
+                  update_inv();
+
+                  if (onComplete) onComplete();
+            });
+
+        });
+
+        document.getElementById("s2").addEventListener("click", () => {
+          document.getElementById("s1").style.display = "none";
+          document.getElementById("s2").style.display = "none";
+
+          type([
+            "You ignore it,",
+            "and keep walking.",
+            ""
+          ], "text", () => {
+            if (onComplete) onComplete();
+          });
+        });
+
+     });
+  }
+
+  else if (onComplete) onComplete();
+}
+
+
+function restart () {
+  localStorage.setItem("location", "welcome");
+  money = 100;
+  items = [];
+  update_inv();
+
+  location.reload();
+}
+
 
 
 
@@ -80,9 +170,20 @@ update_inv();
 
 function enter () {
   type(["Welcome, traveler", ""], "welcome", () => {
-    document.getElementById("start_btn").style.visibility = "visible";
+    document.getElementById("start_btn").style.display = "block";
   });
 }
+
+const saved_money = localStorage.getItem("money");
+const saved_items = localStorage.getItem("items");
+
+if (saved_money) {
+  // saved progress -> replace with existing values
+  money = JSON.parse(saved_money);
+  items = JSON.parse(saved_items);
+}
+update_inv();
+
 
 const saved = localStorage.getItem("location");
 if (saved == "welcome" || !saved) {
@@ -96,10 +197,13 @@ if (saved == "welcome" || !saved) {
 // GAME START //
 
 function gameStart () {
-  document.getElementById("welcome").remove();
-  document.getElementById("start_btn").remove();
+   document.getElementById("welcome").style.display = "none";
+  document.getElementById("start_btn").style.display = "none";
+  document.getElementById("inv").style.display = "block";
+  document.getElementById("reset_btn").style.display = "block"; 
 
   const saved = localStorage.getItem("location");
+  speed = 100;
   if (saved == "welcome" ||  saved == "start") {
     localStorage.setItem("location", "start");
     forest_path();
@@ -114,74 +218,32 @@ function gameStart () {
 
 
 
-let surprise_items = [
-  "Bag with gold coins",
-  "Suspicous bag",
-  "Old dagger",
-  "Dirty cloth",
-  "Cool stick"
-]
-
-function surprise () {
-  let val = Math.floor(Math.random() * 1000) + 1;
-
-  if (val <= surprise_items.length) {
-    type([
-      "You see something out of the corner of your eye.",
-      "Will you pick it up?"
-    ], "text", () => {
-      document.getElementById("s1").style.visibility = "Visible";
-      document.getElementById("s2").style.visibility = "Visible";
-
-      document.getElementById("s1").addEventListener("click", () => {
-        
-        type([
-          "You pick it up.",
-          "You find a ...",
-          surprise_items[val]
-        ], "text", () => {
-
-                if (val == 0) {
-                  money += Math.floor(Math.random() * 100) + 1;
-                }
-                else {
-                  items.push(surprise_items[val]);
-                }
-          });
-
-      });
-
-      document.getElementById("s1").remove();
-      document.getElementById("s2").remove();
-
-    })
-  }
-}
-
-
-
 
 function forest_path () {
-  surprise();
+  surprise("forest_path", () => {
+    type([
+        "You're in a forest.", 
+        "A soft wind comes by,", "the leaves rustling.", 
+        "The sun is shining,", "the birds chittering happily.", 
+        "There is a path in front of you.", 
+        "Will you follow it?"
+      ], "text", () => {
+        document.getElementById("c1").style.display = "block";
+        document.getElementById("c2").style.display = "block";
 
-  speed = 100;
-  type([
-    "You're in a forest.", 
-    "A soft wind comes by,", "the leaves rustling.", 
-    "The sun is shining,", "the birds chittering happily.", 
-    "There is a path in front of you.", 
-    "Will you follow it?"
-  ], "text", () => {
-    document.getElementById("c1").style.visibility = "Visible";
-    document.getElementById("c2").style.visibility = "Visible";
+        visit_cnt["forest_path"] += 1;
+      });
+
   });
+
 }
+
 
 
 /* enter_village */
 function enter_village () {
-  document.getElementById("c1").remove();
-  document.getElementById("c2").remove();
+  document.getElementById("c1").style.display = "none";
+  document.getElementById("c2").style.display = "none";
 
   function go () {
     speed = 100;
@@ -191,8 +253,8 @@ function enter_village () {
       "You can hear the bustling of people.",
       "It seems like a nice place."
     ], "text", () => {
-      document.getElementById("c3").style.visibility = "Visible";
-      document.getElementById("c4").style.visibility = "Visible";
+      document.getElementById("c3").style.display = "block";
+      document.getElementById("c4").style.display = "block";
     });
   }
 
@@ -200,8 +262,8 @@ function enter_village () {
 }
 
 function village () {
-  document.getElementById("c3").remove();
-  document.getElementById("c4").remove();
+  document.getElementById("c3").style.display = "none";
+  document.getElementById("c4").style.display = "none";
 
   localStorage.setItem("location", "village");
 
