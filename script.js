@@ -19,7 +19,6 @@ let visit_cnt = {
 
 
 function typeWriter (onComplete) {
-  console.log(lines[lineIndex]);
 
   if (charIndex < lines[lineIndex].length) {
     typedElement.innerHTML += lines[lineIndex].charAt(charIndex);
@@ -93,9 +92,6 @@ function surprise (location, onComplete) {
   }
 
   let val = Math.floor(Math.random() * 20) + 1;
-
-  console.log(val);
-  console.log(surprise_items.length);
 
   if (val < surprise_items.length) {
     type([
