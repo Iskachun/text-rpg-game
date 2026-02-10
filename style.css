@@ -55,6 +55,10 @@ body {
     align-items: flex-start;
 }
 
+.container {
+    min-height: 200px;
+}
+
 .inv {
     background-color: #623873;
     border-radius: 10px;
@@ -73,4 +77,10 @@ body {
 
 .invh5 {
     text-decoration-line: underline;
+}
+
+
+.inactive {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

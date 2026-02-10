@@ -42,9 +42,6 @@ function typeWriter (onComplete) {
     }
   }
 }
-
-
-
 // typewriter function that takes the text and element id as parameters
 function type (lines2, elementId, onComplete) {
   lineIndex = 0;
@@ -85,7 +82,7 @@ let surprise_items = [
 ]
 
 function surprise (location, onComplete) {
-  if (visit_cnt[location] <= 1) {
+  if (visit_cnt[location] <= 0) {
     // don't "generate" surprises when entered the first time
     if (onComplete) onComplete();
     return;
@@ -159,6 +156,24 @@ function restart () {
   location.reload();
 }
 
+function clear () {
+  document.getElementById("start_btn").style.display = "none";
+
+  document.getElementById("c1").style.display = "none";
+  document.getElementById("c2").style.display = "none";
+  document.getElementById("c3").style.display = "none";
+  document.getElementById("c4").style.display = "none";
+  document.getElementById("c5").style.display = "none";
+  document.getElementById("c6").style.display = "none";
+  document.getElementById("c7").style.display = "none";
+  
+}
+
+function save () {
+  update_inv();
+
+  localStorage.setItem("visited", JSON.stringify(visit_cnt));
+}
 
 
 
@@ -193,10 +208,12 @@ if (saved == "welcome" || !saved) {
 // GAME START //
 
 function gameStart () {
-   document.getElementById("welcome").style.display = "none";
-  document.getElementById("start_btn").style.display = "none";
+  document.getElementById("welcome").style.display = "none";
+  clear();
+
   document.getElementById("inv").style.display = "block";
   document.getElementById("reset_btn").style.display = "block"; 
+  
 
   const saved = localStorage.getItem("location");
   speed = 100;
@@ -216,18 +233,27 @@ function gameStart () {
 
 
 function forest_path () {
+  clear();
+
   surprise("forest_path", () => {
-    type([
+    let l = [
         "You're in a forest.", 
         "A soft wind comes by,", "the leaves rustling.", 
         "The sun is shining,", "the birds chittering happily.", 
         "There is a path in front of you.", 
-        "Will you follow it?"
-      ], "text", () => {
+        "Will you follow it?",
+        ""
+      ]
+    
+    // skip first line if you've already been in the forest
+    if (visit_cnt["forest_path"] > 0) l = l.slice(1);
+
+    type(l, "text", () => {
         document.getElementById("c1").style.display = "block";
         document.getElementById("c2").style.display = "block";
 
         visit_cnt["forest_path"] += 1;
+        save();
       });
 
   });
@@ -238,8 +264,7 @@ function forest_path () {
 
 /* enter_village */
 function enter_village () {
-  document.getElementById("c1").style.display = "none";
-  document.getElementById("c2").style.display = "none";
+  clear();
 
   function go () {
     speed = 100;
@@ -247,7 +272,8 @@ function enter_village () {
       "You follow the path.",
       "Soon, you see a village.",
       "You can hear the bustling of people.",
-      "It seems like a nice place."
+      "It seems like a nice place.",
+      ""
     ], "text", () => {
       document.getElementById("c3").style.display = "block";
       document.getElementById("c4").style.display = "block";
@@ -258,8 +284,7 @@ function enter_village () {
 }
 
 function village () {
-  document.getElementById("c3").style.display = "none";
-  document.getElementById("c4").style.display = "none";
+  clear();
 
   localStorage.setItem("location", "village");
 
