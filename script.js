@@ -1,3 +1,30 @@
+
+const div1 = document.getElementById("inv");
+const div2 = document.getElementById("inv-cont");
+div1.addEventListener("mouseover", () => {
+  div2.style.display = "block";
+  div1.style.color = "#cec1d3";
+});
+
+div1.addEventListener("mouseout", () => {
+  div2.style.display = "none";
+  div1.style.color = "#908894";
+});
+
+const div3 = document.getElementById("stats");
+const div4 = document.getElementById("stats-cont");
+div3.addEventListener("mouseover", () => {
+  div4.style.display = "block";
+  div3.style.color = "#cec1d3";
+});
+
+div3.addEventListener("mouseout", () => {
+  div4.style.display = "none";
+  div3.style.color = "#908894";
+});
+
+
+
 let lines = [];
 let lineIndex = 0;
 let charIndex = 0;
@@ -6,11 +33,15 @@ let typedElement = document.getElementById("typed-text");
 
 let inv_money = document.getElementById("money");
 let inv_item = document.getElementById("inv_items");
-let inv_weap = document.getElementById("inv_weapons");
+
+let stats_health = document.getElementById("health");
+let stats_stamina = document.getElementById("stamina");
 
 let money = 100;
 let items = [];
-let weapons = [];
+
+let health = 100;
+let stamina = 100;
 
 
 let visit_cnt = {
@@ -57,19 +88,23 @@ function update_inv () {
 
   inv_money.innerHTML = JSON.stringify(money);
   inv_item.innerHTML = "";
-  inv_weap.innerHTML = "";
 
   for (let item of items) {
     inv_item.innerHTML += item + "<br>";
-  }
-  for (let weap of weapons) {
-    inv_weap.innerHTML += weap + "<br>";
   }
 
   localStorage.setItem("money", JSON.stringify(money));
   localStorage.setItem("items", JSON.stringify(items));
 }
 
+
+function update_stats () {
+  stats_health.innerHTML = JSON.stringify(health);
+  stats_stamina.innerHTML = JSON.stringify(stamina);
+
+  localStorage.setItem("health", JSON.stringify(health));
+  localStorage.setItem("stamina", JSON.stringify(stamina));
+}
 
 
 
@@ -149,9 +184,19 @@ function surprise (location, onComplete) {
 
 function restart () {
   localStorage.setItem("location", "welcome");
+  localStorage.removeItem("sublocation");
+  localStorage.removeItem("function");
+
   money = 100;
   items = [];
-  update_inv();
+
+  health = 100;
+  stamina = 100;
+
+  visit_cnt = {
+    "forest_path" : 0
+  };
+  save();
 
   location.reload();
 }
@@ -169,11 +214,91 @@ function clear () {
   
 }
 
+function display (s) {
+
+  document.getElementById(s).style.display = "block";
+}
+
 function save () {
   update_inv();
+  update_stats();
 
   localStorage.setItem("visited", JSON.stringify(visit_cnt));
 }
+
+function load () {
+  const saved_money = localStorage.getItem("money");
+  const saved_items = localStorage.getItem("items");
+
+  if (saved_money) {
+    // saved progress -> replace with existing values
+    money = JSON.parse(saved_money);
+    items = JSON.parse(saved_items);
+  }
+  update_inv();
+
+  
+  const saved_health = localStorage.getItem("health");
+  const saved_stamina = localStorage.getItem("stamina");
+
+  if (saved_health) {
+    health = JSON.parse(saved_health);
+    stamina = JSON.parse(saved_stamina);
+  }
+
+  update_stats();
+
+
+  const saved_visit = localStorage.getItem("visited");
+
+  if (saved_visit) {
+    visit_cnt = JSON.parse(saved_visit);
+  }
+
+  ////////////////////////////////////////////////////////////
+
+  const saved = localStorage.getItem("location");
+  if (saved == "welcome" || !saved) {
+    // First time or still on welcome screen
+    if (!saved) localStorage.setItem("location", "welcome");
+    enter();
+  } else {
+    gameStart();
+  }
+}
+
+
+
+function move (position) {
+  const currentFunc = localStorage.getItem("function");
+
+  // every time the player moves they use one unit of stamina
+
+  if (currentFunc && currentFunc != position) {
+    stamina--;  
+    update_stats();
+
+    visit_cnt[position] += 1;
+    save();
+  }
+
+  localStorage.setItem("function", position);
+
+  if (stamina <= 10) {
+    // alert the player that they're running out of stamina
+    document.getElementById("stamina-alert").innerHTML = "You have little stamina left!<br>Eat food or rest to get more stamina."
+  } 
+  else {
+    document.getElementById("stamina-alert").innerHTML = "";
+  }
+}
+
+
+
+
+
+// LOADING DATA AND STARTING THE GAME //
+load();
 
 
 
@@ -183,27 +308,18 @@ function enter () {
   type(["Welcome, traveler", ""], "welcome", () => {
     document.getElementById("start_btn").style.display = "block";
   });
+
+  money = 100;
+  items = [];
+  health = 100;
+  stamina = 100;
+  visit_cnt = {
+    "forest_path" : 0
+  };
 }
 
-const saved_money = localStorage.getItem("money");
-const saved_items = localStorage.getItem("items");
-
-if (saved_money) {
-  // saved progress -> replace with existing values
-  money = JSON.parse(saved_money);
-  items = JSON.parse(saved_items);
-}
-update_inv();
 
 
-const saved = localStorage.getItem("location");
-if (saved == "welcome" || !saved) {
-  // First time or still on welcome screen
-  if (!saved) localStorage.setItem("location", "welcome");
-  enter();
-} else {
-  gameStart();
-}
 
 // GAME START //
 
@@ -211,8 +327,9 @@ function gameStart () {
   document.getElementById("welcome").style.display = "none";
   clear();
 
-  document.getElementById("inv").style.display = "block";
-  document.getElementById("reset_btn").style.display = "block"; 
+  display("inv");
+  display("stats");
+  display("reset_btn");
   
 
   const saved = localStorage.getItem("location");
@@ -231,9 +348,10 @@ function gameStart () {
 
 
 
-
+// PATH IN THE FOREST //
 function forest_path () {
   clear();
+  move("forest_path");
 
   surprise("forest_path", () => {
     let l = [
@@ -244,16 +362,14 @@ function forest_path () {
         "Will you follow it?",
         ""
       ]
+
     
     // skip first line if you've already been in the forest
     if (visit_cnt["forest_path"] > 0) l = l.slice(1);
 
     type(l, "text", () => {
-        document.getElementById("c1").style.display = "block";
-        document.getElementById("c2").style.display = "block";
-
-        visit_cnt["forest_path"] += 1;
-        save();
+        display("c1");
+        display("c2");
       });
 
   });
@@ -262,9 +378,10 @@ function forest_path () {
 
 
 
-/* enter_village */
+// ENTERING THE VILLAGE //
 function enter_village () {
   clear();
+  move("enter_village");
 
   function go () {
     speed = 100;
@@ -275,16 +392,31 @@ function enter_village () {
       "It seems like a nice place.",
       ""
     ], "text", () => {
-      document.getElementById("c3").style.display = "block";
-      document.getElementById("c4").style.display = "block";
+      display("c3");
+      display("c4");
     });
   }
 
   go();
 }
 
+// INSIDE THE VILLAGE //
 function village () {
   clear();
+
+  const subloc = localStorage.getItem("sublocation");
+
+  if (subloc == "square") {
+    square(); return;
+  }
+  if (subloc == "market") {
+    market(); return;
+  }
+  if (subloc == "inn") {
+    inn(); return;
+  }
+
+  move("village");
 
   localStorage.setItem("location", "village");
 
@@ -295,9 +427,12 @@ function village () {
       "It's a nice, cozy place.", 
       "The houses are small and comfortable.",
       "People walk by, smiling to you.",
-      "Where will you go?"
+      "Where will you go?",
+      ""
     ], "text", () => {
-      
+      display("c5");
+      display("c6");
+      display("c7");
     });
   }
 
@@ -305,5 +440,53 @@ function village () {
 }
 
 
+// VILLAGE MAIN SQUARE //
+function square () {
+  clear();
+  move("square");
 
-/* cont_forest */
+  localStorage.setItem("sublocation", "square");
+  function go () {
+    type([
+      "You follow the main road,",
+      "and soon enter the town square.",
+      "There are people everywhere.",
+      "Some are chatting together.",
+      "Some sit on the benches and read books.",
+      "A bard is singing verses.",
+      "What will you do now?",
+      ""
+    ], "text", () => {
+      display("c51");
+      display("c52");
+      display("c53");
+      display("c6");
+      display("c7");
+    });
+  }
+
+  go();
+}
+
+// APPROACH THE GROUP OF PEOPLE //
+function group () {
+  clear();
+  move("group");
+
+
+}
+
+
+// VILLAGE MARKET //
+function market () {
+
+}
+
+
+// VILLAGE INN //
+function inn () {
+
+}
+
+
+// CONTINUE INTO THE FOREST //

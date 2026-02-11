@@ -70,10 +70,10 @@ body {
     display: none;
 }
 
-.inv:hover {
-   border: #1e1422 solid 2px;
-    color: #cec1d3;
+.inv-content, .stats-content {
+    display: none;
 }
+
 
 .invh5 {
     text-decoration-line: underline;
@@ -83,4 +83,9 @@ body {
 .inactive {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+
+.alert {
+    color: red;
 }

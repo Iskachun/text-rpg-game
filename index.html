@@ -19,16 +19,25 @@
             <button id="start_btn" onclick=gameStart()>click to start</button>
 
 
+
             <button class="choice" id="c1" onclick=enter_village()>Follow the path</button>
             <button class="choice inactive" id="c2" onclick=cont_forest()>Continue into the forest</button>
+
 
             <button class="choice" id="c3" onclick=village()>Enter the village</button>
             <button class="choice" id="c4" onclick=gameStart()>Return to the forest</button>
 
+
             <button class="choice" id="c5" onclick=square()>Go to the main square</button>
-            <button class="choice" id="c6" onclick=market()>Go to the market</button>
-            <button class="choice" id="c7" onclick=inn()>Go to the inn</button>
+                <button class="choice inactive" id="c51" onclick=group()>Go to the chatting group of people</button>
+                <button class="choice inactive" id="c52" onclick=bench()>Sit down on the bench next to the reading person</button>
+                <button class="choice inactive" id="c53" onclick=bard()>Listen to the bard's rhymes</button>
             
+                <button class="choice inactive" id="c6" onclick=market()>Go to the market</button>
+            <button class="choice inactive" id="c7" onclick=inn()>Go to the inn</button>
+            
+
+
 
 
             <button class="choice" id="s1">Pick it up</button>
@@ -37,21 +46,31 @@
         </div>
         
         <br><br>
+        <p class="alert" id="stamina-alert"></p>
+
+        <div class="inv" id="stats">
+            <h4>Your stats</h4>
+
+            <div class="stats-content" id="stats-cont">
+                <h5 class="invh5">Health</h5>
+                <p id="health"></p>
+
+                <h5 class="invh5">Stamina</h5>
+                <p id="stamina"></p>
+            </div>
+        </div>
+        <br>
+
         <div class="inv" id="inv">
-            <h4>Your bag:</h4>
+            <h4>Your bag</h4>
 
-            <h5 class="invh5">Money:</h5>
-            <p id="money"></p>
+            <div class="inv-content" id="inv-cont">
+                <h5 class="invh5">Money</h5>
+                <p id="money"></p>
 
-            <h5 class="invh5">Items:</h5>
-            <p id="inv_items">
-                
-            </p>
-
-            <h5 class="invh5">Weapons:</h5>
-            <p id="inv_weapons">
-                
-            </p>
+                <h5 class="invh5">Items</h5>
+                <p id="inv_items"></p>
+            </div>
         </div>
         <br><br>
         <button id="reset_btn" onclick=restart()>restart</button>
