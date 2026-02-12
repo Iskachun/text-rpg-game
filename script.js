@@ -450,7 +450,7 @@ function village () {
 
 
 // VILLAGE MAIN SQUARE //
-function square () {
+function square (index = 0) {
   clear();
 
   const subsublocation = localStorage.getItem("subsublocation");
@@ -462,16 +462,18 @@ function square () {
 
   localStorage.setItem("sublocation", "square");
   function go () {
-    type([
-      "You follow the main road,",
+    l = ["You follow the main road,",
       "and soon enter the town square.",
       "There are people everywhere.",
       "Some are chatting together.",
       "Some sit on the benches and relax.",
       "A bard is singing verses.",
       "What will you do now?",
-      ""
-    ], "text", () => {
+      ""]
+    
+    if (index) l = l.slice(index + 1);
+
+    type(l, "text", () => {
       display("c51");
       display("c52");
       display("c53");
@@ -492,9 +494,6 @@ function group () {
 // APPROACH THE PERSON ON THE BENCH //
 function bench () {
   clear();
-  move("bench");
-
-  localStorage.setItem("subsublocation", "bench");
 
   function go () {
     type([
@@ -504,7 +503,36 @@ function bench () {
       "She looks up curiously as you get close.",
       ""
     ], "text", () => {
-      
+      display("c521");
+      display("c522");
+      display("c523");
+    });
+  }
+
+  go();
+}
+
+// TALK TO THE GIRL ON THE BENCH //
+function talk_bench () {
+
+}
+
+// REST QUIETLY ON THE BENCH //
+function rest_bench () {
+
+}
+
+// LEAVE THE BENCH //
+function leave_bench () {
+  localStorage.removeItem("subsublocation");
+  clear();
+
+  function go () {
+    type([
+      "You get up from the bench.",
+      ""
+    ], "text", () => {
+      square(2);
     });
   }
 
