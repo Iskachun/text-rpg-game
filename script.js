@@ -185,6 +185,7 @@ function surprise (location, onComplete) {
 function restart () {
   localStorage.setItem("location", "welcome");
   localStorage.removeItem("sublocation");
+  localStorage.removeItem("subsublocation");
   localStorage.removeItem("function");
 
   money = 100;
@@ -206,9 +207,20 @@ function clear () {
 
   document.getElementById("c1").style.display = "none";
   document.getElementById("c2").style.display = "none";
+
   document.getElementById("c3").style.display = "none";
   document.getElementById("c4").style.display = "none";
+
   document.getElementById("c5").style.display = "none";
+
+  document.getElementById("c51").style.display = "none";
+
+  document.getElementById("c52").style.display = "none";
+  document.getElementById("c521").style.display = "none";
+  document.getElementById("c522").style.display = "none";
+  document.getElementById("c523").style.display = "none";
+  document.getElementById("c53").style.display = "none";
+
   document.getElementById("c6").style.display = "none";
   document.getElementById("c7").style.display = "none";
   
@@ -278,9 +290,12 @@ function move (position) {
     stamina--;  
     update_stats();
 
+    if (!visit_cnt[position]) visit_cnt[position] = 0;
+
     visit_cnt[position] += 1;
     save();
   }
+
 
   localStorage.setItem("function", position);
 
@@ -406,15 +421,9 @@ function village () {
 
   const subloc = localStorage.getItem("sublocation");
 
-  if (subloc == "square") {
-    square(); return;
-  }
-  if (subloc == "market") {
-    market(); return;
-  }
-  if (subloc == "inn") {
-    inn(); return;
-  }
+  if (subloc == "square") {square(); return;}
+  if (subloc == "market") {market(); return;}
+  if (subloc == "inn") {inn(); return;}
 
   move("village");
 
@@ -443,6 +452,12 @@ function village () {
 // VILLAGE MAIN SQUARE //
 function square () {
   clear();
+
+  const subsublocation = localStorage.getItem("subsublocation");
+  if (subsublocation == "group") {group(); return;}
+  if (subsublocation == "bench") {bench(); return;}
+  if (subsublocation == "inn") {inn(); return;}
+
   move("square");
 
   localStorage.setItem("sublocation", "square");
@@ -452,7 +467,7 @@ function square () {
       "and soon enter the town square.",
       "There are people everywhere.",
       "Some are chatting together.",
-      "Some sit on the benches and read books.",
+      "Some sit on the benches and relax.",
       "A bard is singing verses.",
       "What will you do now?",
       ""
@@ -472,10 +487,34 @@ function square () {
 function group () {
   clear();
   move("group");
-
-
 }
 
+// APPROACH THE PERSON ON THE BENCH //
+function bench () {
+  clear();
+  move("bench");
+
+  localStorage.setItem("subsublocation", "bench");
+
+  function go () {
+    type([
+      "You walk over to a bench and sit down.",
+      "A young girl with two braids is sitting next to you,",
+      "reading a book.",
+      "She looks up curiously as you get close.",
+      ""
+    ], "text", () => {
+      
+    });
+  }
+
+  go();
+}
+
+// APPROACH THE BARD //
+function bard () {
+
+}
 
 // VILLAGE MARKET //
 function market () {
