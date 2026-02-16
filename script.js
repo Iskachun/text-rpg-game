@@ -74,12 +74,12 @@ function typeWriter (onComplete) {
   }
 }
 // typewriter function that takes the text and element id as parameters
-function type (lines2, elementId, onComplete) {
+function type (lines2, elementId, onComplete, clean = 1) {
   lineIndex = 0;
   charIndex = 0;
   lines = lines2;
   typedElement = document.getElementById(elementId);
-  typedElement.innerHTML = ""; // clear previous text
+  if (clean) typedElement.innerHTML = ""; // clear previous text
   typeWriter(onComplete);
 }
 
@@ -194,9 +194,7 @@ function restart () {
   health = 100;
   stamina = 100;
 
-  visit_cnt = {
-    "forest_path" : 0
-  };
+  visit_cnt = {};
   save();
 
   location.reload();
@@ -328,9 +326,7 @@ function enter () {
   items = [];
   health = 100;
   stamina = 100;
-  visit_cnt = {
-    "forest_path" : 0
-  };
+  visit_cnt = {};
 }
 
 
@@ -348,7 +344,7 @@ function gameStart () {
   
 
   const saved = localStorage.getItem("location");
-  speed = 100;
+  speed = 10;
   if (saved == "welcome" ||  saved == "start") {
     localStorage.setItem("location", "start");
     forest_path();
@@ -399,7 +395,6 @@ function enter_village () {
   move("enter_village");
 
   function go () {
-    speed = 100;
     type([
       "You follow the path.",
       "Soon, you see a village.",
@@ -430,7 +425,6 @@ function village () {
   localStorage.setItem("location", "village");
 
   function go () {
-    speed = 100;
     type([
       "You enter the village.",
       "It's a nice, cozy place.", 
@@ -471,7 +465,11 @@ function square (index = 0) {
       "What will you do now?",
       ""]
     
-    if (index) l = l.slice(index + 1);
+    if (index) l = l.slice(index);
+    else if (visit_cnt["square"]) {
+      l = l.slice(1);
+      l[0] = "You're in the town square.";
+    }
 
     type(l, "text", () => {
       display("c51");
@@ -488,22 +486,39 @@ function square (index = 0) {
 // APPROACH THE GROUP OF PEOPLE //
 function group () {
   clear();
-  move("group");
 }
 
 // APPROACH THE PERSON ON THE BENCH //
 function bench () {
   clear();
+  move("bench");
+  let flag = 0;
+
+  l = [
+      "You walk over to a bench and sit down.",
+      "A young girl with two braids", "is sitting next to you,",
+      "reading a book.",
+      "She looks up curiously", "as you get close.",
+      ""
+    ];
+  
+  if (visit_cnt["talk-girl"] > 1) {
+    l = [
+      "You walk over to a bench and sit down.",
+      "There is no one else on the bench.",
+      ""
+    ];
+    flag = 1;
+  }
+  else if (localStorage.getItem("subsublocation") == "bench") {
+    l[0] = "You're in the town square,";
+    l.splice(1, 0, "sitting on a bench.");
+  }
+  localStorage.setItem("subsublocation", "bench");
 
   function go () {
-    type([
-      "You walk over to a bench and sit down.",
-      "A young girl with two braids is sitting next to you,",
-      "reading a book.",
-      "She looks up curiously as you get close.",
-      ""
-    ], "text", () => {
-      display("c521");
+    type(l, "text", () => {
+      if (!flag) display("c521");
       display("c522");
       display("c523");
     });
@@ -514,11 +529,46 @@ function bench () {
 
 // TALK TO THE GIRL ON THE BENCH //
 function talk_bench () {
+  clear();
+  visited_cnt["talk-girl"] = 1;
+  save();
 
 }
 
 // REST QUIETLY ON THE BENCH //
 function rest_bench () {
+  clear();
+  
+  function go () {
+    type([
+      "You lean against the back of the bench.",
+      "",
+      "The sun is shining.",
+      "The wind is gently brushing past.",
+      "A group of eagerly chatting people goes by.",
+      "The girl next to you flips a page of her book.",
+      "A few pigeons land by your feet,",
+      "curiously searching for food.",
+      "",
+      "You feel refreshed.",
+      ""
+    ], "text", () => {
+      stamina = 100; // fully regenerate stamina
+      health = Math.min(100, health + 5); // slightly regenerate health
+      update_stats();
+
+      go2();
+    });
+  };
+
+  function go2 (){
+    type(["What will you do now?", ""], "text", () => {
+      display("c521");
+      display("c523");
+    }, 0);
+  };
+
+  go();
 
 }
 
@@ -529,7 +579,8 @@ function leave_bench () {
 
   function go () {
     type([
-      "You get up from the bench.",
+      "You get up from the bench,",
+      "and look around.",
       ""
     ], "text", () => {
       square(2);
